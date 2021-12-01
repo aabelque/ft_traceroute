@@ -6,13 +6,22 @@
 /*   By: zizou </var/mail/zizou>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/26 18:31:18 by zizou             #+#    #+#             */
-/*   Updated: 2021/11/26 23:54:42 by zizou            ###   ########.fr       */
+/*   Updated: 2021/12/02 00:32:28 by zizou            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_traceroute.h"
 
-int resolve_host(struct s_env *env)
+void resolve_dns(struct sockaddr *addr, struct s_env *e)
+{
+        socklen_t len = sizeof(*addr);
+
+        if (getnameinfo(addr, len, e->dns, sizeof(e->dns),
+                                NULL, 0, NI_NAMEREQD))
+                        e->resolve_dns = false;
+}
+
+int resolve_host(struct s_env *e)
 {
         int ret = 0;
         struct addrinfo hints;
@@ -21,13 +30,15 @@ int resolve_host(struct s_env *env)
         ft_memset(&hints, 0, sizeof(hints));
         hints.ai_flags = AI_CANONNAME;
         hints.ai_family = AF_INET;
-        hints.ai_socktype = SOCK_RAW;
-	hints.ai_protocol = IPPROTO_ICMP;
+        hints.ai_socktype = SOCK_DGRAM;
+	hints.ai_protocol = IPPROTO_UDP;
 
-        ret = getaddrinfo(env->host, NULL, &hints, &env->result);
+        ret = getaddrinfo(e->host, NULL, &hints, &e->result);
         if (ret)
-                exit_errors(ERROR_HOSTNAME, env->host, 0, env);
-                
+                return ERROR_HOSTNAME;
 
+        addr = (struct sockaddr_in *)e->result->ai_addr;
+        inet_ntop(AF_INET, &addr->sin_addr, e->to, INET_ADDRSTRLEN);
+        /* resolve_dns((struct sockaddr *)addr, e); */
         return 0;
 }

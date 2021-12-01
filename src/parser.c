@@ -6,13 +6,13 @@
 /*   By: aabelque <aabelque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 17:49:55 by aabelque          #+#    #+#             */
-/*   Updated: 2021/11/26 18:12:45 by zizou            ###   ########.fr       */
+/*   Updated: 2021/12/02 00:33:21 by zizou            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_traceroute.h"
 
-void get_options(int argc, char **argv, struct s_env *env)
+void get_options(int argc, char **argv, struct s_env *e)
 {
         char *s = NULL;
         int  i = 0;
@@ -25,27 +25,30 @@ void get_options(int argc, char **argv, struct s_env *env)
                         s++;
                         if (*s == '\0') {
                                 if ((argc - i) > 2) {
-                                        handle_errors(argv, argc, i, env);
+                                        handle_errors(argv, argc, i, e);
                                 } else {
-                                        if (env->host == NULL)
-                                                env->host = argv[i];
+                                        if (e->host == NULL) {
+                                                e->host = argv[i];
+                                                e->pos_arg = i;
+                                        }
                                 }
                         } while (*s != '\0') {
                                 switch (*s) {
                                 case 'h':
-                                        env->options |= OPT_H;
+                                        e->options |= OPT_H;
                                         break;
                                 default:
-                                        exit_errors(BAD_OPT, argv[i], i, env); 
+                                        exit_errors(BAD_OPT, argv[i], i, e); 
                                         break;
                                 }
                                 s++;
                         }
                 } else {
-                        if (env->host == NULL) {
+                        if (e->host == NULL) {
                                 if (strisdigit(argv[i]))
                                         print_usage();
-                                env->host = s;
+                                e->host = s;
+                                e->pos_arg = i;
                         }
                 }
         }
