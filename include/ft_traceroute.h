@@ -6,7 +6,7 @@
 /*   By: aabelque <aabelque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 16:32:02 by aabelque          #+#    #+#             */
-/*   Updated: 2021/12/02 01:20:14 by zizou            ###   ########.fr       */
+/*   Updated: 2021/12/02 01:32:08 by zizou            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ int resolve_host(struct s_env *e);
 void exit_errors(int error, char *arg, int position, struct s_env *e);
 void print_usage(struct s_env *e);
 void handle_errors(char **argv, int argc, int idx, struct s_env *e);
+unsigned short checksum(void *addr, int len);
 
 /* Libc */
 int strisdigit(const char *s);

@@ -6,7 +6,7 @@
 /*   By: aabelque <aabelque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 18:00:53 by aabelque          #+#    #+#             */
-/*   Updated: 2021/12/02 01:22:47 by zizou            ###   ########.fr       */
+/*   Updated: 2021/12/02 01:31:22 by zizou            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,4 +64,20 @@ void exit_errors(int error, char *arg, int position, struct s_env *e)
         if (e)
                 environment_cleanup(e);
         exit(EXIT_FAILURE);
+}
+
+unsigned short checksum(void *addr, int len)
+{
+        unsigned long checksum = 0;
+        unsigned short *buf = addr;
+
+        while (len > 1) {
+                checksum += (unsigned short)*buf++;
+                len -= sizeof(unsigned short);
+        }
+        if (len)
+                checksum += *(unsigned char *)buf;
+        checksum = (checksum >> 16) + (checksum & 0xffff);
+        checksum = checksum + (checksum >> 16);
+        return (unsigned short)(~checksum);
 }
