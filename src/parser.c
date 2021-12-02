@@ -6,7 +6,7 @@
 /*   By: aabelque <aabelque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 17:49:55 by aabelque          #+#    #+#             */
-/*   Updated: 2021/12/02 00:33:21 by zizou            ###   ########.fr       */
+/*   Updated: 2021/12/02 01:11:42 by zizou            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void get_options(int argc, char **argv, struct s_env *e)
         int  i = 0;
 
         if (argc < 2)
-                print_usage();
+                print_usage(e);
         while (++i < argc) {
                 s = argv[i];
                 if (*s == '-') {
@@ -46,7 +46,7 @@ void get_options(int argc, char **argv, struct s_env *e)
                 } else {
                         if (e->host == NULL) {
                                 if (strisdigit(argv[i]))
-                                        print_usage();
+                                        print_usage(e);
                                 e->host = s;
                                 e->pos_arg = i;
                         }

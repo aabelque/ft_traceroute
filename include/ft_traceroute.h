@@ -6,7 +6,7 @@
 /*   By: aabelque <aabelque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 16:32:02 by aabelque          #+#    #+#             */
-/*   Updated: 2021/12/02 00:39:23 by zizou            ###   ########.fr       */
+/*   Updated: 2021/12/02 01:20:14 by zizou            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@
 #define EXTRA_ARG3 0x14
 #define SETSOCK_ERROR 0x15
 #define BIND_ERROR 0x16
+#define SUDO_ERROR 0x17
 
 /* Options for traceroute */
 #define OPT_H 0x01
@@ -68,7 +69,7 @@ int resolve_host(struct s_env *e);
 
 /* Utils function */
 void exit_errors(int error, char *arg, int position, struct s_env *e);
-void print_usage(void);
+void print_usage(struct s_env *e);
 void handle_errors(char **argv, int argc, int idx, struct s_env *e);
 
 /* Libc */

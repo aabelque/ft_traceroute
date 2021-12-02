@@ -6,7 +6,7 @@
 /*   By: aabelque <aabelque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 18:00:53 by aabelque          #+#    #+#             */
-/*   Updated: 2021/12/02 00:40:00 by zizou            ###   ########.fr       */
+/*   Updated: 2021/12/02 01:22:47 by zizou            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,15 +20,21 @@ void handle_errors(char **argv, int argc, int idx, struct s_env *e)
                 exit_errors(EXTRA_ARG3, argv[idx + 2], 3, e);
 }
 
-void print_usage(void)
+void print_usage(struct s_env *e)
 {
-        fprintf(stderr, "Usage:\n  ft_traceroute [ -h ] host\n");
-        fprintf(stderr, "Options:\n  -h\t\tDisplay help\n");
+        fprintf(stdout, "Usage:\n  ft_traceroute [ -h ] host\n");
+        fprintf(stdout, "Options:\n  -h\t\tDisplay help\n");
+        fprintf(stdout, "Arguments:\n+    host\tThe host to traceroute to\n");
+        environment_cleanup(e);
+        exit(EXIT_SUCCESS);
 }
 
 void exit_errors(int error, char *arg, int position, struct s_env *e)
 {
         switch (error) {
+        case SUDO_ERROR:
+                fprintf(stderr, "Operation not permitted -> man sudo\n");
+                break;
         case BAD_OPT:
                 fprintf(stderr, "Bad option `%s' (argc %d)\n", arg, position);
                 break;
@@ -55,6 +61,7 @@ void exit_errors(int error, char *arg, int position, struct s_env *e)
                 fprintf(stderr, "Cannot handle \"host\" cmdline arg `%s' on position %d (argc %d)\n", e->host, position, position);
                 break;
         }
-        environment_cleanup(e);
+        if (e)
+                environment_cleanup(e);
         exit(EXIT_FAILURE);
 }

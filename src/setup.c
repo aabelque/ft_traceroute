@@ -6,7 +6,7 @@
 /*   By: aabelque <aabelque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 17:49:36 by aabelque          #+#    #+#             */
-/*   Updated: 2021/12/02 00:44:55 by zizou            ###   ########.fr       */
+/*   Updated: 2021/12/02 01:08:31 by zizou            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ void environment_setup(struct s_env *e)
         e->packetlen = PACKET_LEN;
         e->socket = 0;
         e->host = NULL;
+        ft_memset(e->to, 0, sizeof(e->to));
+        ft_memset(e->dns, 0, sizeof(e->dns));
 }
 
 void environment_cleanup(struct s_env *e)
@@ -36,7 +38,10 @@ void environment_cleanup(struct s_env *e)
         e->packetlen = 0;
         e->socket = 0;
         e->host = NULL;
-        close (e->socket);
+        ft_memset(e->to, 0, sizeof(e->to));
+        ft_memset(e->dns, 0, sizeof(e->dns));
+        if (e->socket)
+                close (e->socket);
 }
 
 void sockets_setup(struct s_env *e)

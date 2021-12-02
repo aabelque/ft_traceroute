@@ -6,7 +6,7 @@
 /*   By: zizou </var/mail/zizou>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/26 18:31:18 by zizou             #+#    #+#             */
-/*   Updated: 2021/12/02 00:32:28 by zizou            ###   ########.fr       */
+/*   Updated: 2021/12/02 01:15:28 by zizou            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,5 @@ int resolve_host(struct s_env *e)
 
         addr = (struct sockaddr_in *)e->result->ai_addr;
         inet_ntop(AF_INET, &addr->sin_addr, e->to, INET_ADDRSTRLEN);
-        /* resolve_dns((struct sockaddr *)addr, e); */
         return 0;
 }
