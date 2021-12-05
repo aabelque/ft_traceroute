@@ -6,7 +6,7 @@
 /*   By: zizou </var/mail/zizou>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/26 18:31:18 by zizou             #+#    #+#             */
-/*   Updated: 2021/12/02 01:15:28 by zizou            ###   ########.fr       */
+/*   Updated: 2021/12/05 23:39:32 by zizou            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,7 @@ void resolve_dns(struct sockaddr *addr, struct s_env *e)
 {
         socklen_t len = sizeof(*addr);
 
-        if (getnameinfo(addr, len, e->dns, sizeof(e->dns),
-                                NULL, 0, NI_NAMEREQD))
+        if (getnameinfo(addr, len, e->dns, sizeof(e->dns), NULL, 0, NI_NAMEREQD))
                         e->resolve_dns = false;
 }
 

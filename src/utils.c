@@ -6,11 +6,18 @@
 /*   By: aabelque <aabelque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 18:00:53 by aabelque          #+#    #+#             */
-/*   Updated: 2021/12/02 01:31:22 by zizou            ###   ########.fr       */
+/*   Updated: 2021/12/05 23:29:23 by zizou            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_traceroute.h"
+
+void print_first_line(struct s_env *e)
+{
+        printf("ft_traceroute to %s (%s), ", e->host, e->to);
+        printf("%d hops max, ", e->max_hops);
+        printf("%d byte packets\n", e->packetlen);
+}
 
 void handle_errors(char **argv, int argc, int idx, struct s_env *e)
 {
@@ -32,6 +39,8 @@ void print_usage(struct s_env *e)
 void exit_errors(int error, char *arg, int position, struct s_env *e)
 {
         switch (error) {
+        case MALLOC_ERROR:
+                fprintf(stderr, "Fatal: failed to allocate with malloc.\n");
         case SUDO_ERROR:
                 fprintf(stderr, "Operation not permitted -> man sudo\n");
                 break;
@@ -66,18 +75,24 @@ void exit_errors(int error, char *arg, int position, struct s_env *e)
         exit(EXIT_FAILURE);
 }
 
-unsigned short checksum(void *addr, int len)
-{
-        unsigned long checksum = 0;
-        unsigned short *buf = addr;
+/* int is_little_endian(void) */
+/* { */
+/*         int x = 1; */
+/*         return *(char *)&x; */
+/* } */
 
-        while (len > 1) {
-                checksum += (unsigned short)*buf++;
-                len -= sizeof(unsigned short);
-        }
-        if (len)
-                checksum += *(unsigned char *)buf;
-        checksum = (checksum >> 16) + (checksum & 0xffff);
-        checksum = checksum + (checksum >> 16);
-        return (unsigned short)(~checksum);
-}
+/* unsigned short checksum(void *addr, int len) */
+/* { */
+/*         unsigned long checksum = 0; */
+/*         unsigned short *buf = addr; */
+
+/*         while (len > 1) { */
+/*                 checksum += (unsigned short)*buf++; */
+/*                 len -= sizeof(unsigned short); */
+/*         } */
+/*         if (len) */
+/*                 checksum += *(unsigned char *)buf; */
+/*         checksum = (checksum >> 16) + (checksum & 0xffff); */
+/*         checksum = checksum + (checksum >> 16); */
+/*         return (unsigned short)(~checksum); */
+/* } */

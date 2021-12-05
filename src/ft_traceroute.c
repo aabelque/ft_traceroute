@@ -6,25 +6,62 @@
 /*   By: aabelque <aabelque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 16:31:43 by aabelque          #+#    #+#             */
-/*   Updated: 2021/12/02 01:22:19 by zizou            ###   ########.fr       */
+/*   Updated: 2021/12/05 23:39:55 by zizou            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_traceroute.h"
 
+void send_packet(char *packet, int ttl, int seq, struct s_env *e)
+{
+        int err = 0;
+        struct s_packet *pkt = (struct s_packet *)packet;
+
+        pkt->ident = e->pid;
+        pkt->seq = seq;
+        gettimeofday(&pkt->tv, NULL);
+
+        if (setsockopt(e->socket, IPPROTO_IP, IP_TTL, &ttl, sizeof(ttl)) < 0)
+                exit_errors(SETSOCK_ERROR, e->host, e->pos_arg, e);
+        do {
+                err = sendto(e->socket, packet, e->packetlen, 0, (struct sockaddr *)&e->to, sizeof(e->to));
+        } while (err < 0 && errno == ECONNREFUSED);
+
+        if (err < 0 || err != e->packetlen)
+                fprintf(stderr, "Error sendto, wrote %d, ret=%d\n", e->packetlen, err);
+        else
+                printf("OK\n");
+}
+
 void ft_traceroute(struct s_env *e)
 {
+        int ttl, probe, seq = 0;
+        char *packet = NULL;
+        struct timeval t1, t2;
+
+        print_first_line(e);
+        packet = malloc(e->packetlen);
+        if (!packet)
+                exit_errors(MALLOC_ERROR, e->host, e->pos_arg, e);
+        ft_memset(packet, 0, e->packetlen);
+
+        for (ttl = 1; ttl <= e->max_hops; ++ttl) {
+                printf("%2d ", ttl);
+                for (probe = 0; probe < e->max_probes; ++probe) {
+                        gettimeofday(&t1, NULL);
+                        send_packet(packet, ttl, ++seq, e);
+                }
+        }
         //TODO
-        //fill packet
         //send packet
         //recv packet
         //analyse packet
-        printf("uid = %d\n", getuid());
-        printf("pid = %d\n", getpid());
+        free(packet);
 }
 
 int main(int argc, char **argv)
 {
+        
         int ret = 0;
         struct s_env e;
 
@@ -38,5 +75,6 @@ int main(int argc, char **argv)
                 exit_errors(ret, e.host, e.pos_arg, &e);
         sockets_setup(&e);
         ft_traceroute(&e);
+        environment_cleanup(&e);
         return 0;
 }
