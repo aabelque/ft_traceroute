@@ -6,7 +6,7 @@
 /*   By: aabelque <aabelque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 16:32:02 by aabelque          #+#    #+#             */
-/*   Updated: 2021/12/05 23:12:56 by zizou            ###   ########.fr       */
+/*   Updated: 2021/12/06 18:15:53 by zizou            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@
 #define UDP_SIZE sizeof(struct udphdr)
 #define HDR_LEN IP_SIZE + UDP_SIZE
 #define NB_HOPS 30
+#define PORT 33434
 
 /* Errors */
 #define BAD_OPT         0x10
@@ -57,20 +58,21 @@ struct s_packet {
 
 /* environment structure */
 struct s_env {
-        bool            resolve_dns;
-        unsigned char   options;
-        int             pid;
-        int             ttl;
-        int             pos_arg;
-        int             max_hops;
-        int             max_probes;
-        int             packetlen;
-        int             data_size;
-        int             socket;
-        char            *host;
-        char            to[INET_ADDRSTRLEN];
-        char            dns[MAXHOST];
-        struct addrinfo *result;
+        bool                    resolve_dns;
+        unsigned char           options;
+        int                     pid;
+        int                     ttl;
+        int                     pos_arg;
+        int                     max_hops;
+        int                     max_probes;
+        int                     packetlen;
+        int                     data_size;
+        int                     socket;
+        char                    *host;
+        char                    to[INET_ADDRSTRLEN];
+        char                    dns[MAXHOST];
+        struct addrinfo         *result;
+        struct sockaddr_in      *addr;
 };
 
 void environment_setup(struct s_env *e);

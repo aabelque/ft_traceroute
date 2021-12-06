@@ -6,7 +6,7 @@
 /*   By: aabelque <aabelque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 17:49:36 by aabelque          #+#    #+#             */
-/*   Updated: 2021/12/05 23:31:34 by zizou            ###   ########.fr       */
+/*   Updated: 2021/12/06 23:38:02 by zizou            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,12 @@ void environment_setup(struct s_env *e)
         e->pos_arg = 0;
         e->max_hops = NB_HOPS;
         e->max_probes = 3;
-        e->data_size = 32;
         e->packetlen = sizeof(struct s_packet);
         e->socket = 0;
         e->host = NULL;
         ft_memset(e->to, 0, sizeof(e->to));
         ft_memset(e->dns, 0, sizeof(e->dns));
+        ft_memset(e->addr, 0, sizeof(*e->addr));
 }
 
 void environment_cleanup(struct s_env *e)
@@ -39,11 +39,12 @@ void environment_cleanup(struct s_env *e)
         e->max_hops = 0;
         e->max_probes = 0;
         e->packetlen = 0;
-        e->data_size = 0;
         e->socket = 0;
         e->host = NULL;
         ft_memset(e->to, 0, sizeof(e->to));
         ft_memset(e->dns, 0, sizeof(e->dns));
+        ft_memset(e->addr, 0, sizeof(*e->addr));
+        freeaddrinfo(e->result);
         if (e->socket)
                 close (e->socket);
 }

@@ -6,7 +6,7 @@
 /*   By: aabelque <aabelque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 16:31:43 by aabelque          #+#    #+#             */
-/*   Updated: 2021/12/05 23:39:55 by zizou            ###   ########.fr       */
+/*   Updated: 2021/12/06 18:15:53 by zizou            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,17 +20,19 @@ void send_packet(char *packet, int ttl, int seq, struct s_env *e)
         pkt->ident = e->pid;
         pkt->seq = seq;
         gettimeofday(&pkt->tv, NULL);
+        printf("sin_addr = %s\n", inet_ntoa(e->addr->sin_addr));
+        printf("sin_port = %u\n", e->addr->sin_port);
 
         if (setsockopt(e->socket, IPPROTO_IP, IP_TTL, &ttl, sizeof(ttl)) < 0)
                 exit_errors(SETSOCK_ERROR, e->host, e->pos_arg, e);
         do {
-                err = sendto(e->socket, packet, e->packetlen, 0, (struct sockaddr *)&e->to, sizeof(e->to));
+                err = sendto(e->socket, packet, sizeof(packet), 0, (struct sockaddr *)e->addr, sizeof(*e->addr));
         } while (err < 0 && errno == ECONNREFUSED);
 
         if (err < 0 || err != e->packetlen)
                 fprintf(stderr, "Error sendto, wrote %d, ret=%d\n", e->packetlen, err);
-        else
-                printf("OK\n");
+        /* else */
+        /*         printf("OK\n"); */
 }
 
 void ft_traceroute(struct s_env *e)

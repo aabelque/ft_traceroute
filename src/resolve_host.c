@@ -6,7 +6,7 @@
 /*   By: zizou </var/mail/zizou>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/26 18:31:18 by zizou             #+#    #+#             */
-/*   Updated: 2021/12/05 23:39:32 by zizou            ###   ########.fr       */
+/*   Updated: 2021/12/06 18:15:48 by zizou            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,7 @@ int resolve_host(struct s_env *e)
         struct sockaddr_in *addr;
 
         ft_memset(&hints, 0, sizeof(hints));
-        hints.ai_flags = AI_CANONNAME;
-        hints.ai_family = AF_INET;
+        hints.ai_family = PF_INET;
         hints.ai_socktype = SOCK_DGRAM;
 	hints.ai_protocol = IPPROTO_UDP;
 
@@ -37,6 +36,8 @@ int resolve_host(struct s_env *e)
                 return ERROR_HOSTNAME;
 
         addr = (struct sockaddr_in *)e->result->ai_addr;
+        e->addr = addr;
+        e->addr->sin_port = PORT;
         inet_ntop(AF_INET, &addr->sin_addr, e->to, INET_ADDRSTRLEN);
         return 0;
 }
