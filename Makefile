@@ -6,7 +6,7 @@
 #    By: aabelque <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/04 13:38:41 by aabelque          #+#    #+#              #
-#    Updated: 2021/11/26 21:16:47 by zizou            ###   ########.fr        #
+#    Updated: 2021/12/09 12:33:56 by zizou            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,6 +28,7 @@ SRC += utils.c
 SRC += parser.c
 SRC += libc.c
 SRC += resolve_host.c
+SRC += packet.c
 
 all: $(NAME)
 

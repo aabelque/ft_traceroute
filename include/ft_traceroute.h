@@ -6,7 +6,7 @@
 /*   By: aabelque <aabelque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 16:32:02 by aabelque          #+#    #+#             */
-/*   Updated: 2021/12/06 18:15:53 by zizou            ###   ########.fr       */
+/*   Updated: 2021/12/09 12:36:11 by zizou            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ void handle_errors(char **argv, int argc, int idx, struct s_env *e);
 /* unsigned short checksum(void *addr, int len); */
 /* int is_little_endian(void); */
 void send_packet(char *packet, int ttl, int seq, struct s_env *e);
+int recv_packet(struct s_env *e);
 
 /* Libc */
 int strisdigit(const char *s);
