@@ -6,11 +6,36 @@
 /*   By: aabelque <aabelque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 17:49:55 by aabelque          #+#    #+#             */
-/*   Updated: 2021/12/02 01:11:42 by zizou            ###   ########.fr       */
+/*   Updated: 2021/12/16 02:05:50 by zizou            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_traceroute.h"
+
+static void set_max_hops(struct s_env *e, char **argv, int idx)
+{
+        char *s = NULL;
+
+        s = argv[idx];
+        if (strisdigit(s))
+                e->max_hops = ft_atoi(s);
+        if (e->max_hops == 0)
+                exit_errors(TTL_ERROR, NULL, 0, e);
+        else if (0 > e->max_hops || e->max_hops > 255)
+                exit_errors(HOPS_ERROR, NULL, 0, e);
+}
+
+static void set_ttl(struct s_env *e, char **argv, int idx)
+{
+        char *s = NULL;
+
+        s = argv[idx];
+
+        if (strisdigit(s))
+                e->ttl = ft_atoi(s);
+        if (0 >= e->ttl || e->ttl > e->max_hops)
+                exit_errors(TTL_ERROR, NULL, 0, e);
+}
 
 void get_options(int argc, char **argv, struct s_env *e)
 {
@@ -21,7 +46,11 @@ void get_options(int argc, char **argv, struct s_env *e)
                 print_usage(e);
         while (++i < argc) {
                 s = argv[i];
-                if (*s == '-') {
+                if (!ft_strcmp(s, "--icmp")) {
+                        e->options |= OPT_ICMP;
+                } else if (!ft_strcmp(s, "--debug")) {
+                        e->options |= OPT_DEBUG;
+                } else if (*s == '-') {
                         s++;
                         if (*s == '\0') {
                                 if ((argc - i) > 2) {
@@ -36,6 +65,23 @@ void get_options(int argc, char **argv, struct s_env *e)
                                 switch (*s) {
                                 case 'h':
                                         e->options |= OPT_H;
+                                        break;
+                                case 'I':
+                                        e->options |= OPT_ICMP;
+                                        break;
+                                case 'd':
+                                        e->options |= OPT_DEBUG;
+                                        break;
+                                case 'f':
+                                        ++i;
+                                        set_ttl(e, argv, i);
+                                        break;
+                                case 'm':
+                                        ++i;
+                                        set_max_hops(e, argv, i);
+                                        break;
+                                case 'n':
+                                        e->options |= OPT_N;
                                         break;
                                 default:
                                         exit_errors(BAD_OPT, argv[i], i, e); 

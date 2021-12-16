@@ -6,7 +6,7 @@
 /*   By: zizou </var/mail/zizou>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/26 18:04:35 by zizou             #+#    #+#             */
-/*   Updated: 2021/11/26 18:34:09 by zizou            ###   ########.fr       */
+/*   Updated: 2021/12/16 01:36:27 by zizou            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,6 @@ inline void *ft_memset(void *s, int c, size_t n)
         return s;
 }
 
-inline int ft_isdigit(char c)
-{
-        if (c >= '0' && c <= '9')
-                return 1;
-        return 0;
-}
-
 inline int ft_strlen(const char *s)
 {
         const char *b = s;
@@ -36,6 +29,13 @@ inline int ft_strlen(const char *s)
         while (*s)
                 s++;
         return s - b;
+}
+
+static inline int ft_isdigit(char c)
+{
+        if (c >= '0' && c <= '9')
+                return 1;
+        return 0;
 }
 
 inline int strisdigit(const char *s)
@@ -46,4 +46,46 @@ inline int strisdigit(const char *s)
 				if (!ft_isdigit(*s++))
 						return 0;
 		return 1;
+}
+
+inline int ft_strcmp(const char *s1, const char *s2)
+{
+        while (*s1 == *s2) {
+                if (*s1 == '\0')
+                        return 0;
+                s1++;
+                s2++;
+        }
+        return *(unsigned char *)s1 - *(unsigned char *)s2;
+}
+
+static inline int ft_isspace(char c)
+{
+        if (c == ' ' || c == '\t' || c == '\f' || c == '\r' \
+                        || c == '\n'|| c == '\v')
+                return 1;
+        return 0;
+}
+
+int ft_atoi(const char *str)
+{
+        int i, sign;
+        long nbr;
+
+        i = 0;
+        sign = 1;
+        nbr = 0;
+        if (!str[i])
+                return 0;
+        while (ft_isspace(str[i]))
+                i++;
+        if (str[i] == '-' || str[i] == '+') {
+                if (str[++i] == '-')
+                        sign = -1;
+        }
+        while (str[i] < '0' || str[i] > '9')
+                i++;
+        while (str[i] >= '0' && str[i] <= '9')
+                nbr = (nbr * 10) + (str[i++] - '0');
+        return nbr * sign;
 }

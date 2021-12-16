@@ -6,20 +6,22 @@
 /*   By: aabelque <aabelque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 18:00:53 by aabelque          #+#    #+#             */
-/*   Updated: 2021/12/05 23:29:23 by zizou            ###   ########.fr       */
+/*   Updated: 2021/12/16 02:06:58 by zizou            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_traceroute.h"
 
-void print_first_line(struct s_env *e)
+inline void print_first_line(struct s_env *e)
 {
-        printf("ft_traceroute to %s (%s), ", e->host, e->to);
+        int len;
+        len = e->proto == IPPROTO_UDP ? sizeof(struct s_udp_pkt): sizeof(struct s_icmp_pkt);
+        printf("ft_traceroute to %s (%s), ", e->host, e->ipv4);
         printf("%d hops max, ", e->max_hops);
-        printf("%d byte packets\n", e->packetlen);
+        printf("%d byte packets\n", len);
 }
 
-void handle_errors(char **argv, int argc, int idx, struct s_env *e)
+inline void handle_errors(char **argv, int argc, int idx, struct s_env *e)
 {
         if (argc > 4)
                 exit_errors(EXTRA_ARG4, argv[idx + 2], 4, e);
@@ -29,8 +31,13 @@ void handle_errors(char **argv, int argc, int idx, struct s_env *e)
 
 void print_usage(struct s_env *e)
 {
-        fprintf(stdout, "Usage:\n  ft_traceroute [ -h ] host\n");
+        fprintf(stdout, "Usage:\n  ft_traceroute [ -hIdfm ] [ -f first_ttl ] [ -m max_ttl ] host\n");
         fprintf(stdout, "Options:\n  -h\t\tDisplay help\n");
+        fprintf(stdout, "  -I  --icmp\tUse ICMP ECHO for tracerouting\n");
+        fprintf(stdout, "  -d  --debug\tEnable socket level debugging\n");
+        fprintf(stdout, "  -f  first_ttl\tStart from the first_ttl hop (instead from 1)\n");
+        fprintf(stdout, "  -m  max_ttl\tSet the max number of hops (max TTL to be\n\t\treached). Default is 30\n");
+        fprintf(stdout, "  -n  \t\tDo not resolve IP addresses to their domain names\n");
         fprintf(stdout, "Arguments:\n+    host\tThe host to traceroute to\n");
         environment_cleanup(e);
         exit(EXIT_SUCCESS);
@@ -42,7 +49,7 @@ void exit_errors(int error, char *arg, int position, struct s_env *e)
         case MALLOC_ERROR:
                 fprintf(stderr, "Fatal: failed to allocate with malloc.\n");
         case SUDO_ERROR:
-                fprintf(stderr, "Operation not permitted -> man sudo\n");
+                fprintf(stderr, "You do not have enough privileges to use this traceroute method.\nsocket: Operation not permitted\n");
                 break;
         case BAD_OPT:
                 fprintf(stderr, "Bad option `%s' (argc %d)\n", arg, position);
@@ -69,30 +76,62 @@ void exit_errors(int error, char *arg, int position, struct s_env *e)
                 fprintf(stderr, "%s: Temporary failure in bind function\n", e->host);
                 fprintf(stderr, "Cannot handle \"host\" cmdline arg `%s' on position %d (argc %d)\n", e->host, position, position);
                 break;
+        case SELECT_ERROR:
+                fprintf(stderr, "%s: Temporary failure in select function\n", arg);
+                break;
+        case TTL_ERROR:
+                fprintf(stderr, "first hop out of range\n");
+                break;
+        case HOPS_ERROR:
+                fprintf(stderr, "max hops cannot be more than 255\n");
+                break;
         }
         if (e)
                 environment_cleanup(e);
         exit(EXIT_FAILURE);
 }
 
-/* int is_little_endian(void) */
-/* { */
-/*         int x = 1; */
-/*         return *(char *)&x; */
-/* } */
+double gettimeval(struct timeval before, struct timeval after)
+{
+        register double time;
 
-/* unsigned short checksum(void *addr, int len) */
-/* { */
-/*         unsigned long checksum = 0; */
-/*         unsigned short *buf = addr; */
+	time = (double)(after.tv_sec - before.tv_sec) * 1000.0 +
+	     (double)(after.tv_usec - before.tv_usec) / 1000.0;
 
-/*         while (len > 1) { */
-/*                 checksum += (unsigned short)*buf++; */
-/*                 len -= sizeof(unsigned short); */
-/*         } */
-/*         if (len) */
-/*                 checksum += *(unsigned char *)buf; */
-/*         checksum = (checksum >> 16) + (checksum & 0xffff); */
-/*         checksum = checksum + (checksum >> 16); */
-/*         return (unsigned short)(~checksum); */
-/* } */
+	return time;
+}
+
+void print_addr(struct s_env *e)
+{
+        resolve_dns((struct sockaddr *)&e->from, e);
+        if (e->options & OPT_N)
+                e->resolve_dns = false;
+        if (e->resolve_dns)
+                printf(" %s (%s)", e->dns, inet_ntoa(e->from.sin_addr));
+        else
+                printf(" %s (%s)", inet_ntoa(e->from.sin_addr), \
+                                inet_ntoa(e->from.sin_addr));
+        e->resolve_dns = true;
+}
+
+int is_little_endian(void)
+{
+        int x = 1;
+        return *(char *)&x;
+}
+
+unsigned short checksum(void *addr, int len)
+{
+        unsigned long checksum = 0;
+        unsigned short *buf = addr;
+
+        while (len > 1) {
+                checksum += (unsigned short)*buf++;
+                len -= sizeof(unsigned short);
+        }
+        if (len)
+                checksum += *(unsigned char *)buf;
+        checksum = (checksum >> 16) + (checksum & 0xffff);
+        checksum = checksum + (checksum >> 16);
+        return (unsigned short)(~checksum);
+}
