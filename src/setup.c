@@ -6,11 +6,33 @@
 /*   By: aabelque <aabelque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 17:49:36 by aabelque          #+#    #+#             */
-/*   Updated: 2021/12/16 00:40:48 by zizou            ###   ########.fr       */
+/*   Updated: 2021/12/20 11:04:28 by zizou            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_traceroute.h"
+#include <netinet/ip_icmp.h>
+
+void fill_icmp_pkt(struct s_env *e, struct s_icmp_pkt *pkt, struct in_addr sin_addr)
+{
+        ft_memset(pkt, 0, sizeof(*pkt));
+	(pkt->ip).ip_off = 0;
+	(pkt->ip).ip_hl = sizeof(pkt->ip) >> 2;
+	(pkt->ip).ip_p = IPPROTO_ICMP;
+	(pkt->ip).ip_len = e->packetlen;
+	(pkt->ip).ip_ttl = e->ttl;
+	(pkt->ip).ip_v = IPVERSION;
+	(pkt->ip).ip_id = htons(e->pid + e->seq);
+	(pkt->ip).ip_tos = 0;
+	(pkt->ip).ip_dst = sin_addr;
+
+        (pkt->icmp).icmp_type = ICMP_ECHO;
+        (pkt->icmp).icmp_code = 0;
+        (pkt->icmp).icmp_cksum = 0;
+        (pkt->icmp).icmp_id = e->pid;
+        (pkt->icmp).icmp_seq = e->seq;
+        (pkt->icmp).icmp_cksum = checksum(&pkt->icmp, sizeof(struct icmp));
+}
 
 void fill_udp_pkt(struct s_env *e, struct s_udp_pkt *pkt, struct in_addr sin_addr)
 {
@@ -37,7 +59,7 @@ void environment_setup(struct s_env *e)
         e->options = 0;
         e->proto = 0;
         e->pid = (getpid() & 0xffff) | 0x8000;
-        e->port = 32768 + 666;
+        e->port = PORT;
         e->ttl = 1;
         e->seq = 0;
         e->pos_arg = 0;
@@ -102,8 +124,10 @@ void sockets_setup(struct s_env *e)
         if (e->rcv_socket == -1)
                 exit_errors(SOCKET_ERROR, e->host, e->pos_arg, e);
         setsockopt(e->rcv_socket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
-        if (e->options & OPT_DEBUG)
+        if (e->options & OPT_DEBUG) {
                 setsockopt(e->rcv_socket, SOL_SOCKET, SO_DEBUG, &opt, sizeof(opt));
+                printf("setsockopt SO_DEBUG: activate\n");
+        }
         if (bind(e->snd_socket, &addr, len) < 0) {
                 printf("%s\n", strerror(errno));
                 exit_errors(BIND_ERROR, e->host, e->pos_arg, e);

@@ -6,7 +6,7 @@
 /*   By: aabelque <aabelque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 16:32:02 by aabelque          #+#    #+#             */
-/*   Updated: 2021/12/16 02:05:13 by zizou            ###   ########.fr       */
+/*   Updated: 2021/12/20 11:44:29 by zizou            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,13 +29,15 @@
 #include <netdb.h>
 #include <stdbool.h>
 
+/* Utils define */
+#define PORT 33434
 #define MAXHOST 1025
+#define DATA_LEN 512
+#define BYTES_PACKETS 32
+#define NB_HOPS 30
 #define IP_SIZE sizeof(struct iphdr)
 #define ICMP_SIZE sizeof(struct icmphdr)
 #define UDP_SIZE sizeof(struct udphdr)
-#define DATA_LEN 512
-#define NB_HOPS 30
-#define PORT 33434
 
 /* Errors */
 #define BAD_OPT         1
@@ -61,18 +63,12 @@
 struct s_udp_pkt {
         struct ip       ip;
         struct udphdr   udp;
-        struct timeval  tv;
-        unsigned char   ttl;
-        unsigned char   seq;
 };
 
 /* ICMP packet structure */
 struct s_icmp_pkt {
         struct ip       ip;
-        struct icmphdr  icmp;
-        struct timeval  tv;
-        unsigned char   ttl;
-        unsigned char   seq;
+        struct icmp     icmp;
 };
 
 /* environment structure */
@@ -88,7 +84,6 @@ struct s_env {
         int                     max_hops;
         int                     max_probes;
         int                     packetlen;
-        int                     data_size;
         int                     snd_socket;
         int                     rcv_socket;
         char                    *host;
@@ -107,6 +102,7 @@ void ft_traceroute(struct s_env *e);
 void send_packet(struct s_env *e);
 void resolve_dns(struct sockaddr *addr, struct s_env *e);
 void fill_udp_pkt(struct s_env *e, struct s_udp_pkt *pkt, struct in_addr sin_addr);
+void fill_icmp_pkt(struct s_env *e, struct s_icmp_pkt *pkt, struct in_addr sin_addr);
 int resolve_host(struct s_env *e);
 int wait_for_packet(struct s_env *e);
 int get_packet(struct s_env *e, int probe);
@@ -118,7 +114,6 @@ void print_first_line(struct s_env *e);
 void print_addr(struct s_env *e);
 void handle_errors(char **argv, int argc, int idx, struct s_env *e);
 unsigned short checksum(void *addr, int len);
-int is_little_endian(void);
 double gettimeval(struct timeval before, struct timeval after);
 
 /* Libc */
