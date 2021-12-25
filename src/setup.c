@@ -6,12 +6,11 @@
 /*   By: aabelque <aabelque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 17:49:36 by aabelque          #+#    #+#             */
-/*   Updated: 2021/12/20 11:04:28 by zizou            ###   ########.fr       */
+/*   Updated: 2021/12/25 11:40:23 by aabelque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_traceroute.h"
-#include <netinet/ip_icmp.h>
 
 void fill_icmp_pkt(struct s_env *e, struct s_icmp_pkt *pkt, struct in_addr sin_addr)
 {
