@@ -6,7 +6,7 @@
 /*   By: aabelque <aabelque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 17:49:55 by aabelque          #+#    #+#             */
-/*   Updated: 2021/12/25 11:39:41 by aabelque         ###   ########.fr       */
+/*   Updated: 2022/01/03 13:52:51 by aabelque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ static void set_max_hops(struct s_env *e, char **argv, int idx)
         s = argv[idx];
         if (strisdigit(s))
                 e->max_hops = ft_atoi(s);
+        else
+                print_usage(e);
         if (e->max_hops == 0)
                 exit_errors(TTL_ERROR, NULL, 0, e);
         else if (e->max_hops < e->ttl)
@@ -34,6 +36,8 @@ static void set_ttl(struct s_env *e, char **argv, int idx)
         s = argv[idx];
         if (strisdigit(s))
                 e->ttl = ft_atoi(s);
+        else
+                print_usage(e);
         if (0 >= e->ttl || e->ttl > e->max_hops) {
                 exit_errors(TTL_ERROR, NULL, 0, e);
         }
