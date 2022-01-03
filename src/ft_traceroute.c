@@ -6,7 +6,7 @@
 /*   By: aabelque <aabelque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 16:31:43 by aabelque          #+#    #+#             */
-/*   Updated: 2022/01/03 13:32:20 by aabelque         ###   ########.fr       */
+/*   Updated: 2022/01/03 15:17:53 by aabelque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ void ft_traceroute(struct s_env *e)
                                 exit_errors(SELECT_ERROR, e->host, 0, e);
                         } else if (cc == 0) {
                                 printf(" *");
-                        } else {
+                        } else if (FD_ISSET(e->rcv_socket, &e->readfs)) {
                                 gettimeofday(&t2, NULL);
                                 code = get_packet(e, probe);
                                 if (e->from.sin_addr.s_addr != lastaddr) {

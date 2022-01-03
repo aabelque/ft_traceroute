@@ -6,7 +6,7 @@
 /*   By: aabelque <aabelque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/25 11:39:20 by aabelque          #+#    #+#             */
-/*   Updated: 2022/01/03 13:32:40 by aabelque         ###   ########.fr       */
+/*   Updated: 2022/01/03 16:26:22 by aabelque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ int get_packet(struct s_env *e, int probe)
         struct udphdr *udp;
 
         ft_memset(&e->from, 0, sizeof(e->from));
+        ft_memset(packet, 0, sizeof(packet));
         len = sizeof(e->from);
 
         cc = recvfrom(e->rcv_socket, (char *)&packet, sizeof(packet), \
@@ -60,13 +61,12 @@ int get_packet(struct s_env *e, int probe)
 
 int wait_for_packet(struct s_env *e)
 {
-        fd_set readfs;
-        struct timeval tv = {.tv_sec = 5, .tv_usec = 0};
+        struct timeval tv = {.tv_sec = 3, .tv_usec = 0};
 
-        FD_ZERO(&readfs);
-        FD_SET(e->rcv_socket, &readfs);
+        FD_ZERO(&e->readfs);
+        FD_SET(e->rcv_socket, &e->readfs);
 
-        return select(e->rcv_socket + 1, &readfs, (fd_set *)0, \
+        return select(e->rcv_socket + 1, &e->readfs, (fd_set *)0, \
                         (fd_set *)0, &tv);
 }
 
@@ -77,8 +77,7 @@ static int send_icmp_packet(struct s_env *e)
 
 	ft_memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
-	addr.sin_addr.s_addr = e->to->sin_addr.s_addr;
-	addr.sin_port = e->port;
+	addr.sin_addr = e->to->sin_addr;
 
         fill_icmp_pkt(e, &packet, addr.sin_addr);
 
@@ -96,8 +95,8 @@ static int send_udp_packet(struct s_env *e)
 
 	ft_memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
-	addr.sin_addr.s_addr = e->to->sin_addr.s_addr;
-	addr.sin_port = e->port;
+	addr.sin_addr = e->to->sin_addr;
+	addr.sin_port = htons(e->port);
 
         fill_udp_pkt(e, &packet, addr.sin_addr);
 

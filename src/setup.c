@@ -6,7 +6,7 @@
 /*   By: aabelque <aabelque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 17:49:36 by aabelque          #+#    #+#             */
-/*   Updated: 2021/12/25 11:40:23 by aabelque         ###   ########.fr       */
+/*   Updated: 2022/01/03 16:17:10 by aabelque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,9 +68,9 @@ void environment_setup(struct s_env *e)
         e->snd_socket = 0;
         e->rcv_socket = 0;
         e->host = NULL;
+        e->to = NULL;
         ft_memset(e->ipv4, 0, sizeof(e->ipv4));
         ft_memset(e->dns, 0, sizeof(e->dns));
-        ft_memset(&e->to, 0, sizeof(*e->to));
         ft_memset(&e->from, 0, sizeof(e->from));
 }
 
@@ -90,8 +90,11 @@ void environment_cleanup(struct s_env *e)
         e->host = NULL;
         ft_memset(e->ipv4, 0, sizeof(e->ipv4));
         ft_memset(e->dns, 0, sizeof(e->dns));
-        ft_memset(&e->to, 0, sizeof(*e->to));
+        ft_memset(e->to, 0, sizeof(*e->to));
         ft_memset(&e->from, 0, sizeof(e->from));
+        if (e->to)
+                free(e->to);
+        e->to = NULL;
         if (e->snd_socket) {
                 close (e->snd_socket);
                 e->snd_socket = 0;

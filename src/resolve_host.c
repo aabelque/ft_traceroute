@@ -6,7 +6,7 @@
 /*   By: aabelque <aabelque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/25 11:39:54 by aabelque          #+#    #+#             */
-/*   Updated: 2021/12/25 11:39:59 by aabelque         ###   ########.fr       */
+/*   Updated: 2022/01/03 16:22:05 by aabelque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int resolve_host(struct s_env *e)
         struct sockaddr_in *addr;
 
         ft_memset(&hints, 0, sizeof(hints));
-        hints.ai_flags = AI_ADDRCONFIG | AI_V4MAPPED;
+        hints.ai_flags = 0;
         hints.ai_family = AF_INET;
         hints.ai_socktype = 0;
 	hints.ai_protocol = IPPROTO_UDP;
@@ -40,7 +40,10 @@ int resolve_host(struct s_env *e)
         if (ret)
                 return ERROR_HOSTNAME;
         addr = (struct sockaddr_in *)e->result->ai_addr;
-        e->to = addr;
+        e->to = ft_memalloc(sizeof(*addr));
+        if (!e->to)
+                return ERROR_HOSTNAME;
+        ft_memcpy(e->to, addr, sizeof(*addr));
         inet_ntop(AF_INET, &addr->sin_addr, e->ipv4, INET_ADDRSTRLEN);
         freeaddrinfo(e->result);
         return 0;

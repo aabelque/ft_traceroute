@@ -6,7 +6,7 @@
 /*   By: aabelque <aabelque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 16:32:02 by aabelque          #+#    #+#             */
-/*   Updated: 2022/01/03 13:33:44 by aabelque         ###   ########.fr       */
+/*   Updated: 2022/01/03 16:20:18 by aabelque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ struct s_env {
         char                    *host;
         char                    ipv4[INET_ADDRSTRLEN];
         char                    dns[MAXHOST];
+        fd_set                  readfs;
         struct addrinfo         *result;
         struct sockaddr_in      *to;
         struct sockaddr_in      from;
@@ -116,6 +117,8 @@ unsigned short checksum(void *addr, int len);
 double gettimeval(struct timeval before, struct timeval after);
 
 /* Libc */
+void *ft_memcpy(void *dest, const void *src, size_t n);
+void *ft_memalloc(size_t size);
 void *ft_memset(void *s, int c, size_t n);
 int strisdigit(const char *s);
 int ft_strlen(const char *s);

@@ -6,11 +6,32 @@
 /*   By: aabelque <aabelque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/25 11:38:57 by aabelque          #+#    #+#             */
-/*   Updated: 2021/12/25 11:39:03 by aabelque         ###   ########.fr       */
+/*   Updated: 2022/01/03 16:15:28 by aabelque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_traceroute.h"
+
+void	*ft_memcpy(void *dest, const void *src, size_t n)
+{
+        void *d = dest;
+
+        while (n) {
+                *((char *)dest++) = *((char *)src++);
+                n--;
+        }
+        return d;
+}
+
+void *ft_memalloc(size_t size)
+{
+        void *buff;
+
+        if ((buff = malloc(size)) == NULL)
+                return NULL;
+        ft_memset(buff, 0, size);
+        return buff;
+}
 
 inline void *ft_memset(void *s, int c, size_t n)
 {
