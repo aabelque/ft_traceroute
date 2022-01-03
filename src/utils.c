@@ -6,7 +6,7 @@
 /*   By: aabelque <aabelque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 18:00:53 by aabelque          #+#    #+#             */
-/*   Updated: 2021/12/25 11:40:36 by aabelque         ###   ########.fr       */
+/*   Updated: 2022/01/03 13:33:15 by aabelque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@ inline void print_first_line(struct s_env *e)
         int len;
         len = e->proto == IPPROTO_UDP ? sizeof(struct s_udp_pkt):
                 sizeof(struct s_icmp_pkt);
-        printf("ft_traceroute to %s (%s), ", e->host, e->ipv4);
-        printf("%d hops max, ", e->max_hops);
-        printf("%d byte packets\n", len + BYTES_PACKETS);
+        printf("ft_traceroute to %s (%s), "
+                "%d hops max, "
+                "%d byte packets\n", e->host, e->ipv4, e->max_hops, len + BYTES_PACKETS);
 }
 
 inline void handle_errors(char **argv, int argc, int idx, struct s_env *e)
@@ -32,18 +32,18 @@ inline void handle_errors(char **argv, int argc, int idx, struct s_env *e)
 
 void print_usage(struct s_env *e)
 {
-        printf("Usage:\n  ft_traceroute [ -hIdfm ]");
-        printf(" [ -f first_ttl ] [ -m max_ttl ] host\n");
-        printf("Options:\n  -h\t\tDisplay help\n");
-        printf("  -I  --icmp\tUse ICMP ECHO for tracerouting\n");
-        printf("  -d  --debug\tEnable socket level debugging\n");
-        printf("  -f  first_ttl");
-        printf("\tStart from the first_ttl hop (instead from 1)\n");
-        printf("  -m  max_ttl");
-        printf("\tSet the max number of hops (max TTL to be\n");
-        printf("\t\treached). Default is 30\n");
-        printf("  -n  \t\tDo not resolve IP addresses to their domain names\n");
-        printf("Arguments:\n+    host\tThe host to traceroute to\n");
+        printf("Usage:\n  ft_traceroute [ -hIdfm ]"
+                " [ -f first_ttl ] [ -m max_ttl ] host\n"
+                "Options:\n  -h\t\tDisplay help\n"
+                "  -I  --icmp\tUse ICMP ECHO for tracerouting\n"
+                "  -d  --debug\tEnable socket level debugging\n"
+                "  -f  first_ttl"
+                "\tStart from the first_ttl hop (instead from 1)\n"
+                "  -m  max_ttl"
+                "\tSet the max number of hops (max TTL to be\n"
+                "\t\treached). Default is 30\n"
+                "  -n  \t\tDo not resolve IP addresses to their domain names\n"
+                "Arguments:\n+    host\tThe host to traceroute to\n");
         environment_cleanup(e);
         exit(EXIT_SUCCESS);
 }
@@ -54,8 +54,8 @@ void exit_errors(int error, char *arg, int position, struct s_env *e)
         case MALLOC_ERROR:
                 fprintf(stderr, "Fatal: failed to allocate with malloc.\n");
         case SUDO_ERROR:
-                fprintf(stderr, "You do not have enough privileges to use traceroute.\n");
-                fprintf(stderr, "socket: Operation not permitted\n");
+                fprintf(stderr, "You do not have enough privileges to use traceroute.\n"
+                                "socket: Operation not permitted\n");
                 break;
         case BAD_OPT:
                 fprintf(stderr, "Bad option `%s' (argc %d)\n", arg, position);
@@ -67,24 +67,24 @@ void exit_errors(int error, char *arg, int position, struct s_env *e)
                 fprintf(stderr, "Extra arg `%s' (position %d, argc %d)\n", arg, position, position);
                 break;
         case ERROR_HOSTNAME:
-                fprintf(stderr, "%s: Temporary failure in name resolution\n", e->host);
-                fprintf(stderr, "Cannot handle \"host\" cmdline arg `%s' on position %d (argc %d)\n", \
-                                e->host, position, position);
+                fprintf(stderr, "%s: Temporary failure in name resolution\n"
+                                "Cannot handle \"host\" cmdline arg `%s' on position %d (argc %d)\n", \
+                                e->host, e->host, position, position);
                 break;
         case SOCKET_ERROR:
-                fprintf(stderr, "%s: Temporary failure in socket function\n", e->host);
-                fprintf(stderr, "Cannot handle \"host\" cmdline arg `%s' on position %d (argc %d)\n", \
-                                e->host, position, position);
+                fprintf(stderr, "%s: Temporary failure in socket function\n"
+                                "Cannot handle \"host\" cmdline arg `%s' on position %d (argc %d)\n", \
+                                e->host, e->host, position, position);
                 break;
         case SETSOCK_ERROR:
-                fprintf(stderr, "%s: Temporary failure in setsockopt function\n", e->host);
-                fprintf(stderr, "Cannot handle \"host\" cmdline arg `%s' on position %d (argc %d)\n", \
-                                e->host, position, position);
+                fprintf(stderr, "%s: Temporary failure in setsockopt function\n"
+                                "Cannot handle \"host\" cmdline arg `%s' on position %d (argc %d)\n", \
+                                e->host, e->host, position, position);
                 break;
         case BIND_ERROR:
-                fprintf(stderr, "%s: Temporary failure in bind function\n", e->host);
-                fprintf(stderr, "Cannot handle \"host\" cmdline arg `%s' on position %d (argc %d)\n", \
-                                e->host, position, position);
+                fprintf(stderr, "%s: Temporary failure in bind function\n"
+                                "Cannot handle \"host\" cmdline arg `%s' on position %d (argc %d)\n", \
+                                e->host, e->host, position, position);
                 break;
         case SELECT_ERROR:
                 fprintf(stderr, "%s: Temporary failure in select function\n", arg);

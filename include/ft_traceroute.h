@@ -6,7 +6,7 @@
 /*   By: aabelque <aabelque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/19 16:32:02 by aabelque          #+#    #+#             */
-/*   Updated: 2021/12/25 11:40:52 by aabelque         ###   ########.fr       */
+/*   Updated: 2022/01/03 13:33:44 by aabelque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@
 #include <sys/types.h>
 #include <sys/time.h>
 #include <netdb.h>
-#include <stdbool.h>
 
 /* Utils define */
 #define PORT 33434

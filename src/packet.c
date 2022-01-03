@@ -6,7 +6,7 @@
 /*   By: aabelque <aabelque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/25 11:39:20 by aabelque          #+#    #+#             */
-/*   Updated: 2021/12/25 11:39:24 by aabelque         ###   ########.fr       */
+/*   Updated: 2022/01/03 13:32:40 by aabelque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int get_packet(struct s_env *e, int probe)
                                 udp = (struct udphdr *)((char *)ip + hlen);
                                 if (ntohs(udp->uh_dport) == e->port + e->seq \
                                                 && ntohs(udp->uh_sport) == e->pid)
-                                        return type == ICMP_TIMXCEED? type : code;
+                                        return type == ICMP_TIMXCEED ? type : code;
                         }
                 }
         }
